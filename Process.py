@@ -19,18 +19,22 @@ class Process():
                       self.data[l_split[0]] = l_split[1] 
                   if isCode:
                       l_split = l.strip().split()
+                      if l_split[0][len(l_split[0]) - 1] == ':':
+                          self.code.append(("label", l_split[0]))
+                      else:
+                          self.code.append((l_split[0], l_split[1]))
 
                   if l[0:5] == '.code':
                       isCode = True
                   if l[0:5] == '.data':
                       isData = True
-                      # self.code.append()
 
 
 
 process = Process()
 
-process.read_process('ex_pgms_tp1/prog3.txt')
+process.read_process('ex_pgms_tp1/prog2.txt')
 
-print(process.data)
+# print(process.data)
+print(process.code)
 
