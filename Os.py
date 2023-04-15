@@ -11,7 +11,7 @@ class Os():
         self.process: Process = process
 
 
-    def aritmeticInstructions(self, op1, instruction, process):
+    def aritmeticInstructions(self, op1: int, instruction: str, process: Process):
         if instruction == "ADD":
             process.acc += op1
         elif instruction == "SUB":
@@ -22,14 +22,14 @@ class Os():
             process.acc /= op1
             #LIDAR COM DIV POR 0
 
-def memoryInstructions(self, op1, instruction, process):
+def memoryInstructions(self, op1: str, instruction: str, process: Process):
         if instruction == "LOAD":
             process.acc = op1
         elif instruction == "STORE":
              process.data[op1] = process.acc
 
 
-def memoryInstructions(self, instruction, process, posLabel):
+def memoryInstructions(self, instruction: str, process: Process, posLabel: int):
         if instruction == "BRANY":
             process.pc = posLabel
         elif instruction == "BRPOS":
@@ -43,7 +43,7 @@ def memoryInstructions(self, instruction, process, posLabel):
             if process.acc < 0:
                 process.pc = posLabel
         
-def memoryInstructions(self, process, index):
+def memoryInstructions(self, process: Process, index: int):
     if index == 0:
         pass
     elif index == 1:
