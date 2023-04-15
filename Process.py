@@ -1,8 +1,9 @@
 class Process():
-    def __init__(self) -> None:
+    def __init__(self):
         self.code = []
         self.data = {}
         self.pc: int = 0
+        self.acc: int = 0
     
     def read_process(self, filename):
         isCode = False
