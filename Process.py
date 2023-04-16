@@ -2,12 +2,16 @@ class Process():
     def __init__(self):
         self.code = []
         self.data = {}
+        self.labels = {}
         self.pc: int = 0
         self.acc: int = 0
+
+        self.terminate = False
 
     def read_process(self, filename):
         isCode = False
         isData = False
+        codeLine = 0
         with open(filename, 'r') as file:
             for l in file:
                 if l[0:8] == '.enddata':
@@ -22,8 +26,10 @@ class Process():
                     l_split = l.strip().split()
                     if l_split[0][len(l_split[0]) - 1] == ':':
                         self.code.append(("label", l_split[0]))
+                        self.labels[l_split[0]] = codeLine
                     else:
                         self.code.append((l_split[0], l_split[1]))
+                    codeLine += 1
 
                 if l[0:5] == '.code':
                     isCode = True
@@ -37,3 +43,5 @@ process.read_process('ex_pgms_tp1/prog2.txt')
 
 # print(process.data)
 print(process.code)
+print("\n")
+print(process.labels)
