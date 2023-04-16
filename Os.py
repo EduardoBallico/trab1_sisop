@@ -48,7 +48,6 @@ class Os():
     def systemInstructions(self, process: Process, index: int):
         if index == 0:
             process.terminate = True
-            print("entrou")
         elif index == 1:
             print(process.acc)
         elif index == 2:
@@ -67,10 +66,9 @@ class Os():
                 aux = instruction[1].strip("#")
                 print("aqui" + aux)
                 op = int(aux)
-                print(op + 3)
                 self.aritmeticInstructions(op, instruction[0], process)
             else:
-                op = process.data[instruction[1]]
+                op = int(process.data[instruction[1]])
                 self.aritmeticInstructions(op, instruction[0], process)
 
         elif instruction[0] in self.instrucoes["memory"]:
@@ -79,7 +77,7 @@ class Os():
                 op = int(aux)
                 self.memoryInstructions(op, instruction[0], process)
             else:
-                op = process.data[instruction[1]]
+                op = int(process.data[instruction[1]])
                 self.memoryInstructions(op, instruction[0], process)
         
         elif instruction[0] in self.instrucoes["jump"]:
