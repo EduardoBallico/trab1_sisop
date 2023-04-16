@@ -28,6 +28,7 @@ class Os():
             process.acc = op1
         elif instruction == "store":
             process.data[op1] = process.acc
+            #aqui precisa receber a chave do dicionario, tipo string
 
 
     def jumpInstructions(self, instruction: str, process: Process, posLabel: int):

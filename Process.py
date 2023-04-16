@@ -23,6 +23,7 @@ class Process():
 
                 if isData:
                     l_split = l.strip().split()
+                    #self.data[l_split[0]] = int(l_split[1])
                     self.data[l_split[0]] = l_split[1]
                 if isCode:
                     l_split = l.strip().split()
