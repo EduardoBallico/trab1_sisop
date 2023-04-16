@@ -2,31 +2,31 @@ from Process import Process
 
 
 class Os():
-    def __init__(self, process):
+    def __init__(self, processName):
         self.instrucoes = {
-            "aritmetic": ["ADD", "SUB", "MULT", "DIV"],
-            "memory": ["LOAD", "STORE"],
+            "aritmetic": ["add", "sub", "mult", "div"],
+            "memory": ["load", "store"],
             "jump": ["BRANY", "BRPOS", "BRZERO", "BRNEG"],
-            "system": ["SYSCALL"]
+            "system": ["syscall"]
         }
-        self.process: Process = process
+        self.process: Process = Process(processName)
 
     def aritmeticInstructions(self, op1: int, instruction: str, process: Process):
-        if instruction == "ADD":
+        if instruction == "add":
             process.acc += op1
-        elif instruction == "SUB":
+        elif instruction == "sub":
             process.acc -= op1
-        elif instruction == "MULT":
+        elif instruction == "mult":
             process.acc *= op1
-        elif instruction == "DIV":
+        elif instruction == "div":
             process.acc /= op1
             # LIDAR COM DIV POR 0
 
 
     def memoryInstructions(self, op1: int, instruction: str, process: Process):
-        if instruction == "LOAD":
+        if instruction == "load":
             process.acc = op1
-        elif instruction == "STORE":
+        elif instruction == "store":
             process.data[op1] = process.acc
 
 
@@ -47,6 +47,7 @@ class Os():
     def systemInstructions(self, process: Process, index: int):
         if index == 0:
             process.terminate = True
+            print("entrou")
         elif index == 1:
             print(process.acc)
         elif index == 2:
@@ -55,19 +56,23 @@ class Os():
 
 
     def executeProcess(self, process: Process):
+        print(process.pc)
         instruction = process.code[process.pc]
+        print(instruction)
         process.pc += 1
 
         if instruction[0] in self.instrucoes["aritmetic"]:
             if instruction[1][0] == "#":
                 aux = instruction[1].strip("#")
+                print("aqui" + aux)
                 op = int(aux)
+                print(op + 3)
                 self.aritmeticInstructions(op, instruction[0], process)
             else:
                 op = process.data[instruction[1]]
                 self.aritmeticInstructions(op, instruction[0], process)
 
-        if instruction[0] in self.instrucoes["memory"]:
+        elif instruction[0] in self.instrucoes["memory"]:
             if instruction[1][0] == "#":
                 aux = instruction[1].strip("#")
                 op = int(aux)
@@ -76,9 +81,17 @@ class Os():
                 op = process.data[instruction[1]]
                 self.memoryInstructions(op, instruction[0], process)
         
-        if instruction[0] in self.instrucoes["jump"]:
+        elif instruction[0] in self.instrucoes["jump"]:
             self.jumpInstructions(instruction[0], process, process.labels[instruction[1]])
 
-        if instruction[0] in self.instrucoes["system"]:
+        elif instruction[0] in self.instrucoes["system"]:
+            print(int(instruction[1]))
             self.systemInstructions(process, int(instruction[1]))
 
+
+
+os = Os("ex_pgms_tp1/prog1.txt")
+while os.process.terminate == False:
+    os.executeProcess(os.process)
+
+print(os.process.acc)

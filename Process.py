@@ -1,18 +1,20 @@
 class Process():
-    def __init__(self):
+    def __init__(self, processName):
         self.code = []
         self.data = {}
         self.labels = {}
         self.pc: int = 0
         self.acc: int = 0
+        self.processName = processName
+        self.read_process()
 
         self.terminate = False
 
-    def read_process(self, filename):
+    def read_process(self):
         isCode = False
         isData = False
         codeLine = 0
-        with open(filename, 'r') as file:
+        with open(self.processName, 'r') as file:
             for l in file:
                 if l[0:8] == '.enddata':
                     isData = False
@@ -37,9 +39,9 @@ class Process():
                     isData = True
 
 
-process = Process()
+process = Process("ex_pgms_tp1/prog2.txt")
 
-process.read_process('ex_pgms_tp1/prog2.txt')
+# process.read_process('ex_pgms_tp1/prog2.txt')
 
 # print(process.data)
 print(process.code)
