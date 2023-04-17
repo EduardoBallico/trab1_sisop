@@ -16,7 +16,6 @@ class Os():
             process.acc += op1
         elif instruction == "sub":
             process.acc -= op1
-            print("acc: ", process.acc)
         elif instruction == "mult":
             process.acc *= op1
         elif instruction == "div":
@@ -27,12 +26,9 @@ class Os():
     def memoryInstructions(self, op1: int or str, instruction: str, process: Process):
         if instruction == "load":
             process.acc = op1
-            print("acc: ", process.acc)
         elif instruction == "store":
             process.data[op1] = process.acc
-            print("acc: ", process.acc)
-            print("op1: ", op1)
-            print("process.data[op1]: ", process.data[op1])
+            process.acc = int(process.acc)
 
 
     def jumpInstructions(self, instruction: str, process: Process, posLabel: int):
@@ -42,7 +38,6 @@ class Os():
             if process.acc > 0:
                 process.pc = posLabel
         elif instruction == "BRZERO":
-            print("acc: ", process.acc)
             if process.acc == 0:
                 process.pc = posLabel
         elif instruction == "BRNEG":
@@ -69,7 +64,6 @@ class Os():
         if instruction[0] in self.instrucoes["aritmetic"]:
             if instruction[1][0] == "#":
                 aux = instruction[1].strip("#")
-                print("aqui" + aux)
                 op = int(aux)
                 self.aritmeticInstructions(op, instruction[0], process)
             else:
@@ -77,7 +71,7 @@ class Os():
                 self.aritmeticInstructions(op, instruction[0], process)
 
         elif instruction[0] in self.instrucoes["memory"]:
-            if instruction[1] == "load":
+            if instruction[0] == "load":
                 if instruction[1][0] == "#":
                     aux = instruction[1].strip("#")
                     op = int(aux)
@@ -92,12 +86,11 @@ class Os():
             self.jumpInstructions(instruction[0], process, process.labels[instruction[1]])
             
         elif instruction[0] in self.instrucoes["system"]:
-            print(int(instruction[1]))
             self.systemInstructions(process, int(instruction[1]))
 
 
 
-os = Os("ex_pgms_tp1/prog2.txt")
+os = Os("ex_pgms_tp1/prog1.txt")
 while os.process.terminate == False:
     os.executeProcess(os.process)
 
