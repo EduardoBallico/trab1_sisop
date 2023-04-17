@@ -38,6 +38,7 @@ class Os():
             if process.acc > 0:
                 process.pc = posLabel
         elif instruction == "BRZERO":
+            print("entrou")
             if process.acc == 0:
                 process.pc = posLabel
         elif instruction == "BRNEG":
@@ -81,7 +82,11 @@ class Os():
                 self.memoryInstructions(op, instruction[0], process)
         
         elif instruction[0] in self.instrucoes["jump"]:
-            self.jumpInstructions(instruction[0], process, process.labels[instruction[1]])
+            print("inst[1] " + instruction[1])
+            print("typeof inst[1] ", type(instruction[1]))
+            print("labels[inst[1]] " + process.labels[instruction[1]])
+            print("pos: " + process.labels[instruction[1][1]])
+            self.jumpInstructions(instruction[0], process, process.labels[instruction[1][1]])
 
         elif instruction[0] in self.instrucoes["system"]:
             print(int(instruction[1]))
@@ -89,7 +94,7 @@ class Os():
 
 
 
-os = Os("ex_pgms_tp1/prog1.txt")
+os = Os("ex_pgms_tp1/prog2.txt")
 while os.process.terminate == False:
     os.executeProcess(os.process)
 
