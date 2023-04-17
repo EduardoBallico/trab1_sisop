@@ -28,8 +28,8 @@ class Process():
                 if isCode:
                     l_split = l.strip().split()
                     if l_split[0][len(l_split[0]) - 1] == ':':
-                        self.code.append(("label", l_split[0]))
-                        self.labels[l_split[0]] = codeLine
+                        self.code.append(("label", l_split[0][0:-1]))
+                        self.labels[l_split[0][0:-1]] = codeLine
                     else:
                         self.code.append((l_split[0], l_split[1]))
                     codeLine += 1

@@ -82,12 +82,8 @@ class Os():
                 self.memoryInstructions(op, instruction[0], process)
         
         elif instruction[0] in self.instrucoes["jump"]:
-            print("inst[1] " + instruction[1])
-            print("typeof inst[1] ", type(instruction[1]))
-            print("labels[inst[1]] " + process.labels[instruction[1]])
-            print("pos: " + process.labels[instruction[1][1]])
-            self.jumpInstructions(instruction[0], process, process.labels[instruction[1][1]])
-
+            self.jumpInstructions(instruction[0], process, process.labels[instruction[1]])
+            
         elif instruction[0] in self.instrucoes["system"]:
             print(int(instruction[1]))
             self.systemInstructions(process, int(instruction[1]))
@@ -97,5 +93,7 @@ class Os():
 os = Os("ex_pgms_tp1/prog2.txt")
 while os.process.terminate == False:
     os.executeProcess(os.process)
+
+# print(os.process.labels[], '-------------------------------------')
 
 print(os.process.acc)
