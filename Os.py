@@ -16,6 +16,7 @@ class Os():
             process.acc += op1
         elif instruction == "sub":
             process.acc -= op1
+            print("acc: ", process.acc)
         elif instruction == "mult":
             process.acc *= op1
         elif instruction == "div":
@@ -23,12 +24,15 @@ class Os():
             # LIDAR COM DIV POR 0
 
 
-    def memoryInstructions(self, op1: int, instruction: str, process: Process):
+    def memoryInstructions(self, op1: int or str, instruction: str, process: Process):
         if instruction == "load":
             process.acc = op1
+            print("acc: ", process.acc)
         elif instruction == "store":
             process.data[op1] = process.acc
-            #aqui precisa receber a chave do dicionario, tipo string
+            print("acc: ", process.acc)
+            print("op1: ", op1)
+            print("process.data[op1]: ", process.data[op1])
 
 
     def jumpInstructions(self, instruction: str, process: Process, posLabel: int):
@@ -38,7 +42,7 @@ class Os():
             if process.acc > 0:
                 process.pc = posLabel
         elif instruction == "BRZERO":
-            print("entrou")
+            print("acc: ", process.acc)
             if process.acc == 0:
                 process.pc = posLabel
         elif instruction == "BRNEG":
@@ -73,13 +77,16 @@ class Os():
                 self.aritmeticInstructions(op, instruction[0], process)
 
         elif instruction[0] in self.instrucoes["memory"]:
-            if instruction[1][0] == "#":
-                aux = instruction[1].strip("#")
-                op = int(aux)
-                self.memoryInstructions(op, instruction[0], process)
+            if instruction[1] == "load":
+                if instruction[1][0] == "#":
+                    aux = instruction[1].strip("#")
+                    op = int(aux)
+                    self.memoryInstructions(op, instruction[0], process)
+                else:
+                    op = int(process.data[instruction[1]])
+                    self.memoryInstructions(op, instruction[0], process)
             else:
-                op = int(process.data[instruction[1]])
-                self.memoryInstructions(op, instruction[0], process)
+                self.memoryInstructions(instruction[1], instruction[0], process)
         
         elif instruction[0] in self.instrucoes["jump"]:
             self.jumpInstructions(instruction[0], process, process.labels[instruction[1]])
