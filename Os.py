@@ -138,6 +138,10 @@ class Os():
                                 self.readyList.append(self.blockedList.pop(index))
                                 self.readyList = sorted(self.readyList, key = lambda p : p.priority)
 
+                    # if self.readyList[0].priority > self.activeProcess.priority:
+                    #     break
+
+
                 if self.activeProcess.terminate:
                     self.finishedList.append(self.activeProcess)
                     self.activeProcess.turnaroundTime = self.time - self.activeProcess.startTime 
