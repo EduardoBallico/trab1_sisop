@@ -2,14 +2,27 @@ from Process import Process
 
 
 class Os():
-    def __init__(self, processName):
+    def __init__(self):
         self.instrucoes = {
             "aritmetic": ["add", "sub", "mult", "div"],
             "memory": ["load", "store"],
             "jump": ["BRANY", "BRPOS", "BRZERO", "BRNEG"],
             "system": ["syscall"]
         }
-        self.process: Process = Process(processName)
+
+        self.readyList = []
+        self.blockedList = []
+        self.processList = []
+        self.finishedList = []
+
+        self.time = 0
+
+        self.activeProcess: Process
+
+
+
+    def loadProcess(self, processName: str):
+        self.processList.append(Process(processName))
 
     def aritmeticInstructions(self, op1: int, instruction: str, process: Process):
         if instruction == "add":
@@ -19,7 +32,11 @@ class Os():
         elif instruction == "mult":
             process.acc *= op1
         elif instruction == "div":
-            process.acc /= op1
+            if op1 != 0:
+                process.acc /= op1
+            else:
+                print("Processo ", str(process.processName), "foi terminado por tentar realizar divisao por 0")
+                process.terminate = True
             # LIDAR COM DIV POR 0
 
 
@@ -49,14 +66,16 @@ class Os():
         if index == 0:
             process.terminate = True
         elif index == 1:
+            process.shouldBeBlocked = True
             print(process.acc)
         elif index == 2:
+            process.shouldBeBlocked = True
             process.acc = input("Digite um valor")
             #precisa ser numero
 
 
     def executeProcess(self, process: Process):
-        print(process.pc)
+        # print(process.pc)
         instruction = process.code[process.pc]
         print(instruction)
         process.pc += 1
@@ -88,12 +107,50 @@ class Os():
         elif instruction[0] in self.instrucoes["system"]:
             self.systemInstructions(process, int(instruction[1]))
 
+    def roundRobin(self):
+        self.readyList = self.processList
+        self.readyList = sorted(self.readyList, key = lambda p : p.priority)
+        # print(self.readyList[0].priority)
+        # print(self.readyList[1].priority)
+        # print(self.readyList[2].priority)
+
+        while len(self.readyList) != 0:
+            if len(self.readyList) != 0:
+                self.activeProcess = self.readyList.pop[0]
+                for i in self.activeProcess.quantum:
+                    self.executeProcess(self.activeProcess)
+                    if self.activeProcess.shouldBeBlocked:
+                        break
+                    if self.activeProcess.terminate:
+                        break
+                    self.time += 1
+
+                if self.activeProcess.terminate:
+                    self.finishedList.append(self.activeProcess)
+                    self.activeProcess.turnaroundTime = self.time - self.activeProcess.startTime 
+                elif self.activeProcess.shouldBeBlocked:
+                    self.blockedList.append(self.activeProcess)
+                else:
+                    self.readyList.append(self.activeProcess)
+                    self.readyList = sorted(self.readyList, key = lambda p : p.priority)
 
 
-os = Os("ex_pgms_tp1/prog1.txt")
-while os.process.terminate == False:
-    os.executeProcess(os.process)
+
+os = Os()
+os.loadProcess("ex_pgms_tp1/prog1.txt")
+
+os.loadProcess("ex_pgms_tp1/prog2.txt")
+os.processList[1].priority = 1
+os.processList[1].quantum = 7
+
+os.loadProcess("ex_pgms_tp1/prog3.txt")
+os.processList[2].priority = 0
+
+os.roundRobin()
+
+# while os.process.terminate == False:
+#     os.executeProcess(os.process)
 
 # print(os.process.labels[], '-------------------------------------')
 
-print(os.process.acc)
+# print(os.process.acc)

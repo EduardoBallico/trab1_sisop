@@ -3,12 +3,24 @@ class Process():
         self.code = []
         self.data = {}
         self.labels = {}
+
         self.pc: int = 0
         self.acc: int = 0
+
         self.processName = processName
         self.read_process()
 
         self.terminate = False
+        self.priority = 2
+
+        self.quantum = 4
+
+        self.waitingTime = 0
+        self.runningTime = 0
+        self.startTime = 0
+        self.turnaroundTime = 0
+
+        self.shouldBeBlocked = False
 
     def read_process(self):
         isCode = False
