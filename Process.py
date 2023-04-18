@@ -21,6 +21,7 @@ class Process():
         self.turnaroundTime = 0
 
         self.shouldBeBlocked = False
+        self.blockedUntil = 0
 
     def read_process(self):
         isCode = False
