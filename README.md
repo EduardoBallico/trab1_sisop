@@ -1,4 +1,4 @@
-# trab1_sisop
+# Trabalho 1 - Sistemas Operacionais
 Projeto de Execução Dinâmica de Processos
 
 
