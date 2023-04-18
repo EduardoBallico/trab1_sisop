@@ -1,5 +1,5 @@
 from Process import Process
-
+import random
 
 class Os():
     def __init__(self):
@@ -64,13 +64,13 @@ class Os():
 
     def systemInstructions(self, process: Process, index: int):
         if index == 0:
-            process.terminate = True
+            self.activeProcess.terminate = True
         elif index == 1:
-            process.shouldBeBlocked = True
+            self.activeProcess.shouldBeBlocked = True
             print(process.acc)
         elif index == 2:
-            process.shouldBeBlocked = True
-            process.acc = input("Digite um valor")
+            self.activeProcess.shouldBeBlocked = True
+            self.activeProcess.acc = input("Digite um valor: ")
             #precisa ser numero
 
 
@@ -107,6 +107,9 @@ class Os():
         elif instruction[0] in self.instrucoes["system"]:
             self.systemInstructions(process, int(instruction[1]))
 
+        if process.pc == len(process.code):
+            self.activeProcess.terminate = True
+
     def roundRobin(self):
         self.readyList = self.processList
         self.readyList = sorted(self.readyList, key = lambda p : p.priority)
@@ -116,35 +119,61 @@ class Os():
 
         while len(self.readyList) != 0:
             if len(self.readyList) != 0:
-                self.activeProcess = self.readyList.pop[0]
-                for i in self.activeProcess.quantum:
+                self.activeProcess = self.readyList.pop(0)
+                print("processo ", self.activeProcess.processName, " entrou")
+                for i in range(self.activeProcess.quantum):
+                    self.time += 1
+                    print("Os time ", str(self.time))
+                    #print("executou", str(i))
                     self.executeProcess(self.activeProcess)
                     if self.activeProcess.shouldBeBlocked:
                         break
                     if self.activeProcess.terminate:
                         break
-                    self.time += 1
+
+                    if len(self.blockedList) != 0:
+                        for process in self.blockedList:
+                            if process.blockedUntil == self.time:
+                                index = self.blockedList.index(process)
+                                self.readyList.append(self.blockedList.pop(index))
+                                self.readyList = sorted(self.readyList, key = lambda p : p.priority)
 
                 if self.activeProcess.terminate:
                     self.finishedList.append(self.activeProcess)
                     self.activeProcess.turnaroundTime = self.time - self.activeProcess.startTime 
                 elif self.activeProcess.shouldBeBlocked:
                     self.blockedList.append(self.activeProcess)
+                    self.activeProcess.blockedUntil = self.time + random.randint(8, 10)
+                    print("processo", self.activeProcess.processName, "bloqueado por ", str(self.activeProcess.blockedUntil - self.time))
+                    self.activeProcess.shouldBeBlocked = False
                 else:
                     self.readyList.append(self.activeProcess)
                     self.readyList = sorted(self.readyList, key = lambda p : p.priority)
+
+            if len(self.readyList) == 0 and len(self.blockedList) > 0:
+                while len(self.readyList) == 0:
+                    self.time += 1
+                    print("tempo acrescentado em bloqueados", str(self.time))
+                    for process in self.blockedList:
+                            if process.blockedUntil == self.time:
+                                index = self.blockedList.index(process)
+                                self.readyList.append(self.blockedList.pop(index))
+                                self.readyList = sorted(self.readyList, key = lambda p : p.priority)
+
+                print("processo saiu da lista de bloqueados")
 
 
 
 os = Os()
 os.loadProcess("ex_pgms_tp1/prog1.txt")
+os.processList[0].priority = 1
 
 os.loadProcess("ex_pgms_tp1/prog2.txt")
 os.processList[1].priority = 1
 os.processList[1].quantum = 7
 
 os.loadProcess("ex_pgms_tp1/prog3.txt")
-os.processList[2].priority = 0
+os.processList[2].priority = 1
 
 os.roundRobin()
 
