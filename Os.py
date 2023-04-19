@@ -239,7 +239,7 @@ if __name__ == '__main__':
         scheduler = input('Qual escalonador você deseja utilizar? (RR/SJF) ')
 
     while True:    
-        path = input('Insira o caminho do processo: ')
+        path = input('Insira o nome (path) do processo: ')
         arrivalTime = int(input('Qual é o tempo de chegada do processo? '))
 
         os.loadProcess(path, arrivalTime)
@@ -249,12 +249,13 @@ if __name__ == '__main__':
             os.processList[-1].priority = process_priority
             process_quantum = input('Insira o quantum desse processo: ')
             os.processList[-1].quantum = process_quantum
+            print(os.processList[-1].processName)
 
         elif scheduler.upper() == 'SJF': 
             process_execution_time = input('Insira o tempo de execução desse processo: ')
             os.processList[-1].execTime = process_execution_time
 
-        add_process = input('Você deseja inserir mais algum processo? (S/N)')
+        add_process = input('Você deseja inserir mais algum processo? (S/N) ')
 
         if add_process.upper() == 'N':
             break
