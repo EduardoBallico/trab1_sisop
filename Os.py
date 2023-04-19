@@ -23,7 +23,7 @@ class Os():
 
 
 
-    def loadProcess(self, arrivalTime: int, processName: str): # adicionei arrival time para o usuario inserir
+    def loadProcess(self, processName: str, arrivalTime): # adicionei arrival time para o usuario inserir
         p = Process(processName, arrivalTime) # ------------------
         self.processList.append(p)
         self.arrivalTimes.add(p.arrivalTime)
@@ -235,8 +235,8 @@ if __name__ == '__main__':
     os = Os()
     scheduler = ''
 
-    while scheduler.upper() != 'RR' or scheduler.upper() != 'SJF':
-        scheduler = input('Qual escalonador você deseja utilizar? (RR/SJF)')
+    while scheduler.upper() != 'RR' and scheduler.upper() != 'SJF':
+        scheduler = input('Qual escalonador você deseja utilizar? (RR/SJF) ')
 
     while True:    
         path = input('Insira o caminho do processo: ')

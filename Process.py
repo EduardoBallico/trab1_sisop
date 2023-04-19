@@ -59,11 +59,11 @@ class Process():
                     isData = True
 
 
-process = Process("ex_pgms_tp1/prog2.txt")
+# process = Process("ex_pgms_tp1/prog2.txt")
 
-# process.read_process('ex_pgms_tp1/prog2.txt')
+# # process.read_process('ex_pgms_tp1/prog2.txt')
 
-# print(process.data)
-print(process.code)
-print("\n")
-print(process.labels)
+# # print(process.data)
+# print(process.code)
+# print("\n")
+# print(process.labels)
