@@ -15,6 +15,8 @@ class Os():
         self.processList = []
         self.finishedList = []
 
+        self.arrivalTimes = set()
+
         self.time = 0
 
         self.activeProcess: Process
@@ -22,7 +24,9 @@ class Os():
 
 
     def loadProcess(self, processName: str):
-        self.processList.append(Process(processName))
+        p = Process(processName)
+        self.processList.append(p)
+        self.arrivalTimes.add(p.arrivalTime)
 
     def aritmeticInstructions(self, op1: int, instruction: str, process: Process):
         if instruction == "add":
@@ -111,8 +115,12 @@ class Os():
             self.activeProcess.terminate = True
 
     def roundRobin(self):
-        self.readyList = self.processList
-        self.readyList = sorted(self.readyList, key = lambda p : p.priority)
+        # self.readyList = self.processList
+        if self.time in self.arrivalTimes:
+            aux = filter(self.processList, lambda p : p.arrivalTime == self.time)
+            for a in aux:
+                print(a.processName)
+        # self.readyList = sorted(self.readyList, key = lambda p : p.priority)
 
         while len(self.readyList) != 0:
         # if len(self.readyList) != 0:
@@ -226,14 +234,18 @@ class Os():
 os = Os()
 os.loadProcess("ex_pgms_tp1/prog1.txt")
 os.processList[0].execTime = 3
+os.processList[0].arrivalTime = 0
+
 
 os.loadProcess("ex_pgms_tp1/prog2.txt")
 os.processList[1].execTime = 2
+os.processList[0].arrivalTime = 7
 
 os.loadProcess("ex_pgms_tp1/prog3.txt")
 os.processList[2].execTime = 1
+os.processList[0].arrivalTime = 0
 
-os.sjf()
+os.roundRobin()
 
 # while os.process.terminate == False:
 #     os.executeProcess(os.process)

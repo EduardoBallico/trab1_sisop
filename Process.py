@@ -20,6 +20,8 @@ class Process():
         self.startTime = 0
         self.turnaroundTime = 0
 
+        self.arrivalTime = 0
+
 # ------ Round Robin ------
         self.shouldBeBlocked = False
         self.blockedUntil = 0
