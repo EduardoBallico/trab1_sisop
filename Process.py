@@ -1,5 +1,5 @@
 class Process():
-    def __init__(self, processName):
+    def __init__(self, processName: str, arrivalTime: int):
         self.code = []
         self.data = {}
         self.labels = {}
@@ -20,7 +20,7 @@ class Process():
         self.startTime = 0
         self.turnaroundTime = 0
 
-        self.arrivalTime = 0
+        self.arrivalTime = arrivalTime
 
 # ------ Round Robin ------
         self.shouldBeBlocked = False

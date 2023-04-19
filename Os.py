@@ -23,8 +23,8 @@ class Os():
 
 
 
-    def loadProcess(self, processName: str):
-        p = Process(processName)
+    def loadProcess(self, arrivalTime: int, processName: str): # adicionei arrival time para o usuario inserir
+        p = Process(processName, arrivalTime) # ------------------
         self.processList.append(p)
         self.arrivalTimes.add(p.arrivalTime)
 
@@ -231,25 +231,57 @@ class Os():
 
 
 
-os = Os()
-os.loadProcess("ex_pgms_tp1/prog1.txt")
-os.processList[0].execTime = 3
-os.processList[0].arrivalTime = 0
+if __name__ == '__main__':
+    os = Os()
+    scheduler = ''
+
+    while scheduler.upper() != 'RR' or scheduler.upper() != 'SJF':
+        scheduler = input('Qual escalonador você deseja utilizar? (RR/SJF)')
+
+    while True:    
+        path = input('Insira o caminho do processo: ')
+        arrivalTime = int(input('Qual é o tempo de chegada do processo? '))
+
+        os.loadProcess(path, arrivalTime)
+        
+        if scheduler.upper() == 'RR':
+            process_priority = input('Insira a prioridade desse processo: ')
+            os.processList[-1].priority = process_priority
+            process_quantum = input('Insira o quantum desse processo: ')
+            os.processList[-1].quantum = process_quantum
+
+        elif scheduler.upper() == 'SJF': 
+            process_execution_time = input('Insira o tempo de execução desse processo: ')
+            os.processList[-1].execTime = process_execution_time
+
+        add_process = input('Você deseja inserir mais algum processo? (S/N)')
+
+        if add_process.upper() == 'N':
+            break
+    
+    if scheduler.upper() == 'RR':
+        os.roundRobin()
+    
+    elif scheduler.upper() == 'SJF':
+        os.sjf()
+
+    # os.loadProcess("ex_pgms_tp1/prog1.txt")
+    # os.processList[0].execTime = 3
+    # os.processList[0].arrivalTime = 0
 
 
-os.loadProcess("ex_pgms_tp1/prog2.txt")
-os.processList[1].execTime = 2
-os.processList[0].arrivalTime = 7
+    # os.loadProcess("ex_pgms_tp1/prog2.txt")
+    # os.processList[1].execTime = 2
+    # os.processList[0].arrivalTime = 7
 
-os.loadProcess("ex_pgms_tp1/prog3.txt")
-os.processList[2].execTime = 1
-os.processList[0].arrivalTime = 0
+    # os.loadProcess("ex_pgms_tp1/prog3.txt")
+    # os.processList[2].execTime = 1
+    # os.processList[0].arrivalTime = 0
 
-os.roundRobin()
 
-# while os.process.terminate == False:
-#     os.executeProcess(os.process)
+    # while os.process.terminate == False:
+    #     os.executeProcess(os.process)
 
-# print(os.process.labels[], '-------------------------------------')
+    # print(os.process.labels[], '-------------------------------------')
 
-# print(os.process.acc)
+    # print(os.process.acc)
