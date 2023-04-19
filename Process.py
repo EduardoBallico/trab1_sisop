@@ -20,8 +20,12 @@ class Process():
         self.startTime = 0
         self.turnaroundTime = 0
 
+# ------ Round Robin ------
         self.shouldBeBlocked = False
         self.blockedUntil = 0
+
+# ------ SJF ------
+        self.execTime = 0
 
     def read_process(self):
         isCode = False
