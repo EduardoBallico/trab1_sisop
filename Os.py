@@ -138,8 +138,10 @@ class Os():
                                 self.readyList.append(self.blockedList.pop(index))
                                 self.readyList = sorted(self.readyList, key = lambda p : p.priority)
 
-                    # if self.readyList[0].priority > self.activeProcess.priority:
-                    #     break
+                    if len(self.readyList) != 0:
+                        if self.readyList[0].priority < self.activeProcess.priority:
+                            print("-----------------trocou----------------------")
+                            break
 
 
                 if self.activeProcess.terminate:
@@ -159,7 +161,7 @@ class Os():
                     self.time += 1
                     print("tempo acrescentado em bloqueados", str(self.time))
                     for process in self.blockedList:
-                            if process.blockedUntil == self.time:
+                            if process.blockedUntil <= self.time:
                                 index = self.blockedList.index(process)
                                 self.readyList.append(self.blockedList.pop(index))
                                 self.readyList = sorted(self.readyList, key = lambda p : p.priority)
@@ -173,11 +175,11 @@ os.loadProcess("ex_pgms_tp1/prog1.txt")
 os.processList[0].priority = 1
 
 os.loadProcess("ex_pgms_tp1/prog2.txt")
-os.processList[1].priority = 1
+os.processList[1].priority = 0
 os.processList[1].quantum = 7
 
 os.loadProcess("ex_pgms_tp1/prog3.txt")
-os.processList[2].priority = 1
+os.processList[2].priority = 2
 
 os.roundRobin()
 
