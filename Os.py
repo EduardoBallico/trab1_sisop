@@ -130,9 +130,43 @@ class Os():
                     self.readyList.append(self.notStarted.pop(index))
                     self.readyList = sorted(self.readyList, key = lambda p : p.execTime)
 
+    def addWaitingTime(self):
+        if len(self.readyList) != 0:
+            for p in self.readyList:
+                p.waitingTime += 1
+
+    def showLists(self):
+        print("\n----------- Lista de prontos -----------")
+        if len(self.readyList) != 0:
+            for p in self.readyList:
+                print(p.processName)
+        else:
+            print("Lista vazia")
+
+        print("\n----------- Processo executando -----------")
+        if self.activeProcess is not None:
+            print(self.activeProcess.processName)
+        else:
+            print("Nenhum processo executando")
+
+        print("\n----------- Lista de bloqueados -----------")
+        if len(self.blockedList) != 0:
+            for p in self.blockedList:
+                print(p.processName)
+        else:
+            print("Lista vazia")
+
+        print("\n----------- Lista de finalizados -----------")
+        if len(self.finishedList) != 0:
+            for p in self.finishedList:
+                print(p.processName)
+        else:
+            print("Lista vazia")
+
+
     def roundRobin(self):
         while len(self.readyList) != 0 or len(self.notStarted) != 0:
-            self.testArrivalTime()   
+            self.testArrivalTimeRR()   
 
             if len(self.readyList) != 0:
                 self.activeProcess = self.readyList.pop(0)
@@ -155,17 +189,23 @@ class Os():
                                 self.readyList = sorted(self.readyList, key = lambda p : p.priority)
 
                     
-                    self.testArrivalTime()   
+                    self.testArrivalTimeRR()   
+
+                    self.addWaitingTime()
+
+                    self.activeProcess.processingTime += 1
 
                     if len(self.readyList) != 0:
                         if self.readyList[0].priority < self.activeProcess.priority:
                             print("-----------------trocou----------------------")
                             break
 
+                    self.showLists()
+
             if self.activeProcess is not None:
                 if self.activeProcess.terminate:
                     self.finishedList.append(self.activeProcess)
-                    self.activeProcess.turnaroundTime = self.time - self.activeProcess.startTime 
+                    self.activeProcess.turnaroundTime = self.time - self.activeProcess.arrivalTime 
                 elif self.activeProcess.shouldBeBlocked:
                     self.blockedList.append(self.activeProcess)
                     self.activeProcess.blockedUntil = self.time + random.randint(8, 10)
@@ -186,7 +226,10 @@ class Os():
                                 self.readyList = sorted(self.readyList, key = lambda p : p.priority)
 
                     
-                    self.testArrivalTime()   
+                    self.testArrivalTimeRR()   
+
+                    self.showLists()
+
 
                 print("processo saiu da lista de bloqueados")
 
@@ -198,47 +241,53 @@ class Os():
     def sjf(self):
         self.testArrivalTimeSJF()
 
-        while len(self.readyList) != 0:
-        # if len(self.readyList) != 0:
-            self.activeProcess = self.readyList.pop(0)
-            print("processo ", self.activeProcess.processName, " entrou")
+        while len(self.readyList) != 0 or len(self.notStarted) != 0:
+            if len(self.readyList) != 0:
+                self.activeProcess = self.readyList.pop(0)
+                print("processo ", self.activeProcess.processName, " entrou")
 
-            while not self.activeProcess.terminate:
-                self.time += 1
-                print("Os time ", str(self.time))
-                #print("executou", str(i))
-                self.executeProcess(self.activeProcess)
-                if self.activeProcess.shouldBeBlocked:
-                    break
-                if self.activeProcess.terminate:
-                    break
-
-                if len(self.blockedList) != 0:
-                    for process in self.blockedList:
-                        if process.blockedUntil == self.time:
-                            index = self.blockedList.index(process)
-                            self.readyList.append(self.blockedList.pop(index))
-                            self.readyList = sorted(self.readyList, key = lambda p : p.execTime)
-
-                self.testArrivalTimeSJF()
-
-                if len(self.readyList) != 0:
-                    if self.readyList[0].execTime < self.activeProcess.execTime:
-                        print("-----------------trocou----------------------")
+                while not self.activeProcess.terminate:
+                    self.time += 1
+                    print("Os time ", str(self.time))
+                    #print("executou", str(i))
+                    self.executeProcess(self.activeProcess)
+                    if self.activeProcess.shouldBeBlocked:
+                        break
+                    if self.activeProcess.terminate:
                         break
 
+                    if len(self.blockedList) != 0:
+                        for process in self.blockedList:
+                            if process.blockedUntil == self.time:
+                                index = self.blockedList.index(process)
+                                self.readyList.append(self.blockedList.pop(index))
+                                self.readyList = sorted(self.readyList, key = lambda p : p.execTime)
 
-            if self.activeProcess.terminate:
-                self.finishedList.append(self.activeProcess)
-                self.activeProcess.turnaroundTime = self.time - self.activeProcess.startTime 
-            elif self.activeProcess.shouldBeBlocked:
-                self.blockedList.append(self.activeProcess)
-                self.activeProcess.blockedUntil = self.time + random.randint(8, 10)
-                print("processo", self.activeProcess.processName, "bloqueado por ", str(self.activeProcess.blockedUntil - self.time))
-                self.activeProcess.shouldBeBlocked = False
-            else:
-                self.readyList.append(self.activeProcess)
-                self.readyList = sorted(self.readyList, key = lambda p : p.execTime)
+                    self.testArrivalTimeSJF()
+
+                    self.addWaitingTime()
+
+                    self.activeProcess.processingTime += 1
+
+                    if len(self.readyList) != 0:
+                        if self.readyList[0].execTime < self.activeProcess.execTime:
+                            print("-----------------trocou----------------------")
+                            break
+
+                    self.showLists()
+
+            if self.activeProcess is not None:
+                if self.activeProcess.terminate:
+                    self.finishedList.append(self.activeProcess)
+                    self.activeProcess.turnaroundTime = self.time - self.activeProcess.arrivalTime 
+                elif self.activeProcess.shouldBeBlocked:
+                    self.blockedList.append(self.activeProcess)
+                    self.activeProcess.blockedUntil = self.time + random.randint(8, 10)
+                    print("processo", self.activeProcess.processName, "bloqueado por ", str(self.activeProcess.blockedUntil - self.time))
+                    self.activeProcess.shouldBeBlocked = False
+                else:
+                    self.readyList.append(self.activeProcess)
+                    self.readyList = sorted(self.readyList, key = lambda p : p.execTime)
 
             if (len(self.readyList) == 0 and len(self.blockedList) > 0) or (len(self.notStarted) != 0 and len(self.readyList) == 0 and len(self.blockedList) == 0):
                 while len(self.readyList) == 0:
@@ -251,6 +300,8 @@ class Os():
                                 self.readyList = sorted(self.readyList, key = lambda p : p.execTime)
 
                     self.testArrivalTimeSJF()
+
+                    self.showLists()
 
 
                 print("processo saiu da lista de bloqueados")

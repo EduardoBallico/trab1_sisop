@@ -16,8 +16,7 @@ class Process():
         self.quantum = 4
 
         self.waitingTime = 0
-        self.runningTime = 0
-        self.startTime = 0
+        self.processingTime = 0
         self.turnaroundTime = 0
 
         self.arrivalTime = arrivalTime
