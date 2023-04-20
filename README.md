@@ -12,7 +12,7 @@ O propósito deste estudo é investigar assuntos relacionados ao gerenciamento e
 
 ## Execução
 
-- Executar o programa Os.py - Python os.py
+- Executar o programa Os.py - python Os.py
 
 - No início da execução, é solicitado ao usuário qual escalonador desejado (Round Robin ou Shortest Job First)
 
@@ -20,7 +20,7 @@ O propósito deste estudo é investigar assuntos relacionados ao gerenciamento e
 
 - É possível carregar diversos processos
 
-- Quando o usuário definir que não deseja inserir mais processos, o escalonador sreá executado
+- Quando o usuário definir que não deseja inserir mais processos, o escalonador será executado
  
 ## Autores
 
