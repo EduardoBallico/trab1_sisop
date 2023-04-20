@@ -220,6 +220,8 @@ class Os():
 
                     self.showLists()
 
+                    # input('\nPressione ENTER para continuar\n')
+
             if self.activeProcess is not None:
                 if self.activeProcess.terminate:
                     self.finishedList.append(self.activeProcess)
@@ -246,7 +248,7 @@ class Os():
                     
                     self.testArrivalTimeRR()   
 
-                    input('\nPressione ENTER para continuar\n')
+                    # input('\nPressione ENTER para continuar\n')
                     
                     self.showLists()
         
@@ -297,7 +299,7 @@ class Os():
                             print("-----------------trocou----------------------")
                             break
 
-                    input('\nPressione ENTER para continuar\n')
+                    # input('\nPressione ENTER para continuar\n')
                     
                     self.showLists()
 
@@ -326,11 +328,16 @@ class Os():
 
                     self.testArrivalTimeSJF()
 
-                    input('\nPressione ENTER para continuar\n')
+                    # input('\nPressione ENTER para continuar\n')
 
                     self.showLists()
+        print("----- Todos os programas terminados -----")
+        print("Informaçoes sobre os processos:")
         for process in self.finishedList:
-            print('Tempo do processo', process.processName, '=', str(process.turnaroundTime))
+            print("Processo ", process.processName, ':')
+            print("Waiting time: ", str(process.waitingTime))
+            print("Processing time: ", str(process.processingTime))
+            print("Turnaround time: ", str(process.turnaroundTime))
 
 
 
