@@ -73,17 +73,17 @@ class Os():
             self.activeProcess.terminate = True
         elif index == 1:
             self.activeProcess.shouldBeBlocked = True
-            print(process.acc)
+            print("Saida de dados no processo", str(self.activeProcess.processName), ": ", str(process.acc))
         elif index == 2:
             self.activeProcess.shouldBeBlocked = True
-            self.activeProcess.acc = input("Digite um valor: ")
+            self.activeProcess.acc = input("Entrada de dados no processo", str(self.activeProcess.processName), ", digite um valor: ")
             #precisa ser numero
 
 
     def executeProcess(self, process: Process): #executa as instruções
         # print(process.pc)
         instruction = process.code[process.pc]
-        # print(instruction)
+        print(instruction)
         process.pc += 1
 
         if instruction[0] in self.instrucoes["aritmetic"]:
