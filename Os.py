@@ -246,10 +246,12 @@ class Os():
                     
                     self.testArrivalTimeRR()   
 
+                    input('\nPressione ENTER para continuar\n')
+                    
                     self.showLists()
-
-
-                # print("processo saiu da lista de bloqueados")
+        
+        for process in self.finishedList:
+            print('Tempo do processo', process.processName, '=', str(process.turnaroundTime))
 
             
 
@@ -292,9 +294,11 @@ class Os():
 
                     if len(self.readyList) != 0:
                         if self.readyList[0].execTime < self.activeProcess.execTime:
-                            # print("-----------------trocou----------------------")
+                            print("-----------------trocou----------------------")
                             break
 
+                    input('\nPressione ENTER para continuar\n')
+                    
                     self.showLists()
 
             if self.activeProcess is not None:
@@ -322,10 +326,11 @@ class Os():
 
                     self.testArrivalTimeSJF()
 
+                    input('\nPressione ENTER para continuar\n')
+
                     self.showLists()
-
-
-                # print("processo saiu da lista de bloqueados")
+        for process in self.finishedList:
+            print('Tempo do processo', process.processName, '=', str(process.turnaroundTime))
 
 
 
