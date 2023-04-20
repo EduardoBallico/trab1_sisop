@@ -4,12 +4,19 @@ Projeto de Execução Dinâmica de Processos
 
 ## Introdução
 
-O presente trabalho tem por objetivo explorar temas referentes ao escalonamento e troca entre processos que utilizam um dado processador. É previsto o desenvolvimento de um ambiente que empregue uma política de escalonamento específica, bem como gerencie a inclusão e remoção de processos que ocupam o processador. A carga de processos deverá ser realizada a partir de programas que utilizarão uma linguagem assembly hipotética.
+O propósito deste estudo é investigar assuntos relacionados ao gerenciamento e alternância de processos que empregam um processador em particular. O objetivo é criar um ambiente que implemente políticas de escalonamento específicas (Round Robin e Shortest Job First) e gerencie a adição e remoção de processos que ocupam o processador. A carga de processos será realizada através de programas que utilizam uma linguagem de montagem hipotética.
+
+## Requisitos para a execução
+
+- Python 3.10 - [Download](https://www.python.org/downloads/release/python-31010/)
 
 ## Como executar
 
-TODO
+- Executar o programa Os.py - Python os.py
+ 
+## Autores
 
-## Informações sobre a implementação
-
-TODO ??
+- [Camila Ilges](https://www.github.com/camilailges)
+- [Eduardo Ballico](https://www.github.com/EduardoBallico)
+- [Eduardo Pretto](https://www.github.com/DuduPretto)
+- [João Pedro Feijó](https://www.github.com/jpfeijo)
