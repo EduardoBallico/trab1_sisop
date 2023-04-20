@@ -76,7 +76,8 @@ class Os():
             print("Saida de dados no processo", str(self.activeProcess.processName), ": ", str(process.acc))
         elif index == 2:
             self.activeProcess.shouldBeBlocked = True
-            self.activeProcess.acc = input("Entrada de dados no processo", str(self.activeProcess.processName), ", digite um valor: ")
+            print("Entrada de dados no processo", str(self.activeProcess.processName))
+            self.activeProcess.acc = input("Digite um valor: ")
             #precisa ser numero
 
 
