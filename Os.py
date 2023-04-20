@@ -19,7 +19,7 @@ class Os():
 
         self.time = 0
 
-        self.activeProcess: Process
+        self.activeProcess = None
 
 
 
@@ -27,6 +27,7 @@ class Os():
         p = Process(processName, arrivalTime) # ------------------
         self.notStarted.append(p)
         self.arrivalTimes.add(p.arrivalTime)
+        print("arrival time = ", p.arrivalTime)
 
     def aritmeticInstructions(self, op1: int, instruction: str, process: Process):
         if instruction == "add":
@@ -114,13 +115,24 @@ class Os():
         if process.pc == len(process.code):
             self.activeProcess.terminate = True
 
-    def roundRobin(self):
-        while len(self.readyList) != 0 or len(self.notStarted) != 0:
-            for p in self.notStarted:
-                if p.startTime == self.time:
+
+    def testArrivalTimeRR(self):
+        for p in self.notStarted:
+                if p.arrivalTime == self.time:
                     index = self.notStarted.index(p)
                     self.readyList.append(self.notStarted.pop(index))
-                    self.readyList = sorted(self.readyList, key = lambda p : p.priority)   
+                    self.readyList = sorted(self.readyList, key = lambda p : p.priority)
+
+    def testArrivalTimeSJF(self):
+        for p in self.notStarted:
+                if p.arrivalTime == self.time:
+                    index = self.notStarted.index(p)
+                    self.readyList.append(self.notStarted.pop(index))
+                    self.readyList = sorted(self.readyList, key = lambda p : p.execTime)
+
+    def roundRobin(self):
+        while len(self.readyList) != 0 or len(self.notStarted) != 0:
+            self.testArrivalTime()   
 
             if len(self.readyList) != 0:
                 self.activeProcess = self.readyList.pop(0)
@@ -142,23 +154,26 @@ class Os():
                                 self.readyList.append(self.blockedList.pop(index))
                                 self.readyList = sorted(self.readyList, key = lambda p : p.priority)
 
+                    
+                    self.testArrivalTime()   
+
                     if len(self.readyList) != 0:
                         if self.readyList[0].priority < self.activeProcess.priority:
                             print("-----------------trocou----------------------")
                             break
 
-
-            if self.activeProcess.terminate:
-                self.finishedList.append(self.activeProcess)
-                self.activeProcess.turnaroundTime = self.time - self.activeProcess.startTime 
-            elif self.activeProcess.shouldBeBlocked:
-                self.blockedList.append(self.activeProcess)
-                self.activeProcess.blockedUntil = self.time + random.randint(8, 10)
-                print("processo", self.activeProcess.processName, "bloqueado por ", str(self.activeProcess.blockedUntil - self.time))
-                self.activeProcess.shouldBeBlocked = False
-            else:
-                self.readyList.append(self.activeProcess)
-                self.readyList = sorted(self.readyList, key = lambda p : p.priority)
+            if self.activeProcess is not None:
+                if self.activeProcess.terminate:
+                    self.finishedList.append(self.activeProcess)
+                    self.activeProcess.turnaroundTime = self.time - self.activeProcess.startTime 
+                elif self.activeProcess.shouldBeBlocked:
+                    self.blockedList.append(self.activeProcess)
+                    self.activeProcess.blockedUntil = self.time + random.randint(8, 10)
+                    print("processo", self.activeProcess.processName, "bloqueado por ", str(self.activeProcess.blockedUntil - self.time))
+                    self.activeProcess.shouldBeBlocked = False
+                else:
+                    self.readyList.append(self.activeProcess)
+                    self.readyList = sorted(self.readyList, key = lambda p : p.priority)
 
             if (len(self.readyList) == 0 and len(self.blockedList) > 0) or (len(self.notStarted) != 0 and len(self.readyList) == 0 and len(self.blockedList) == 0):
                 while len(self.readyList) == 0:
@@ -170,12 +185,18 @@ class Os():
                                 self.readyList.append(self.blockedList.pop(index))
                                 self.readyList = sorted(self.readyList, key = lambda p : p.priority)
 
+                    
+                    self.testArrivalTime()   
+
                 print("processo saiu da lista de bloqueados")
+
+            
+
+
 
 # ------------------------ SJF ---------------------------
     def sjf(self):
-        self.readyList = self.notStarted
-        self.readyList = sorted(self.readyList, key = lambda p : p.execTime)
+        self.testArrivalTimeSJF()
 
         while len(self.readyList) != 0:
         # if len(self.readyList) != 0:
@@ -199,6 +220,8 @@ class Os():
                             self.readyList.append(self.blockedList.pop(index))
                             self.readyList = sorted(self.readyList, key = lambda p : p.execTime)
 
+                self.testArrivalTimeSJF()
+
                 if len(self.readyList) != 0:
                     if self.readyList[0].execTime < self.activeProcess.execTime:
                         print("-----------------trocou----------------------")
@@ -217,7 +240,7 @@ class Os():
                 self.readyList.append(self.activeProcess)
                 self.readyList = sorted(self.readyList, key = lambda p : p.execTime)
 
-            if (len(self.readyList) == 0 and len(self.blockedList) > 0):
+            if (len(self.readyList) == 0 and len(self.blockedList) > 0) or (len(self.notStarted) != 0 and len(self.readyList) == 0 and len(self.blockedList) == 0):
                 while len(self.readyList) == 0:
                     self.time += 1
                     print("tempo acrescentado em bloqueados", str(self.time))
@@ -226,6 +249,9 @@ class Os():
                                 index = self.blockedList.index(process)
                                 self.readyList.append(self.blockedList.pop(index))
                                 self.readyList = sorted(self.readyList, key = lambda p : p.execTime)
+
+                    self.testArrivalTimeSJF()
+
 
                 print("processo saiu da lista de bloqueados")
 
