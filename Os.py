@@ -12,7 +12,7 @@ class Os():
 
         self.readyList = []
         self.blockedList = []
-        self.processList = []
+        self.notStarted = []
         self.finishedList = []
 
         self.arrivalTimes = set()
@@ -25,7 +25,7 @@ class Os():
 
     def loadProcess(self, processName: str, arrivalTime): # adicionei arrival time para o usuario inserir
         p = Process(processName, arrivalTime) # ------------------
-        self.processList.append(p)
+        self.notStarted.append(p)
         self.arrivalTimes.add(p.arrivalTime)
 
     def aritmeticInstructions(self, op1: int, instruction: str, process: Process):
@@ -115,38 +115,37 @@ class Os():
             self.activeProcess.terminate = True
 
     def roundRobin(self):
-        # self.readyList = self.processList
-        if self.time in self.arrivalTimes:
-            aux = filter(self.processList, lambda p : p.arrivalTime == self.time)
-            for a in aux:
-                print(a.processName)
-        # self.readyList = sorted(self.readyList, key = lambda p : p.priority)
+        while len(self.readyList) != 0 or len(self.notStarted) != 0:
+            for p in self.notStarted:
+                if p.startTime == self.time:
+                    index = self.notStarted.index(p)
+                    self.readyList.append(self.notStarted.pop(index))
+                    self.readyList = sorted(self.readyList, key = lambda p : p.priority)   
 
-        while len(self.readyList) != 0:
-        # if len(self.readyList) != 0:
-            self.activeProcess = self.readyList.pop(0)
-            print("processo ", self.activeProcess.processName, " entrou")
-            for i in range(self.activeProcess.quantum):
-                self.time += 1
-                print("Os time ", str(self.time))
-                #print("executou", str(i))
-                self.executeProcess(self.activeProcess)
-                if self.activeProcess.shouldBeBlocked:
-                    break
-                if self.activeProcess.terminate:
-                    break
-
-                if len(self.blockedList) != 0:
-                    for process in self.blockedList:
-                        if process.blockedUntil == self.time:
-                            index = self.blockedList.index(process)
-                            self.readyList.append(self.blockedList.pop(index))
-                            self.readyList = sorted(self.readyList, key = lambda p : p.priority)
-
-                if len(self.readyList) != 0:
-                    if self.readyList[0].priority < self.activeProcess.priority:
-                        print("-----------------trocou----------------------")
+            if len(self.readyList) != 0:
+                self.activeProcess = self.readyList.pop(0)
+                print("processo ", self.activeProcess.processName, " entrou")
+                for i in range(self.activeProcess.quantum):
+                    self.time += 1
+                    print("Os time ", str(self.time))
+                    #print("executou", str(i))
+                    self.executeProcess(self.activeProcess)
+                    if self.activeProcess.shouldBeBlocked:
                         break
+                    if self.activeProcess.terminate:
+                        break
+
+                    if len(self.blockedList) != 0:
+                        for process in self.blockedList:
+                            if process.blockedUntil == self.time:
+                                index = self.blockedList.index(process)
+                                self.readyList.append(self.blockedList.pop(index))
+                                self.readyList = sorted(self.readyList, key = lambda p : p.priority)
+
+                    if len(self.readyList) != 0:
+                        if self.readyList[0].priority < self.activeProcess.priority:
+                            print("-----------------trocou----------------------")
+                            break
 
 
             if self.activeProcess.terminate:
@@ -161,7 +160,7 @@ class Os():
                 self.readyList.append(self.activeProcess)
                 self.readyList = sorted(self.readyList, key = lambda p : p.priority)
 
-            if len(self.readyList) == 0 and len(self.blockedList) > 0:
+            if (len(self.readyList) == 0 and len(self.blockedList) > 0) or (len(self.notStarted) != 0 and len(self.readyList) == 0 and len(self.blockedList) == 0):
                 while len(self.readyList) == 0:
                     self.time += 1
                     print("tempo acrescentado em bloqueados", str(self.time))
@@ -173,8 +172,9 @@ class Os():
 
                 print("processo saiu da lista de bloqueados")
 
+# ------------------------ SJF ---------------------------
     def sjf(self):
-        self.readyList = self.processList
+        self.readyList = self.notStarted
         self.readyList = sorted(self.readyList, key = lambda p : p.execTime)
 
         while len(self.readyList) != 0:
@@ -217,7 +217,7 @@ class Os():
                 self.readyList.append(self.activeProcess)
                 self.readyList = sorted(self.readyList, key = lambda p : p.execTime)
 
-            if len(self.readyList) == 0 and len(self.blockedList) > 0:
+            if (len(self.readyList) == 0 and len(self.blockedList) > 0):
                 while len(self.readyList) == 0:
                     self.time += 1
                     print("tempo acrescentado em bloqueados", str(self.time))
@@ -245,15 +245,15 @@ if __name__ == '__main__':
         os.loadProcess(path, arrivalTime)
         
         if scheduler.upper() == 'RR':
-            process_priority = input('Insira a prioridade desse processo: ')
-            os.processList[-1].priority = process_priority
-            process_quantum = input('Insira o quantum desse processo: ')
-            os.processList[-1].quantum = process_quantum
-            print(os.processList[-1].processName)
+            process_priority = int(input('Insira a prioridade desse processo: '))
+            os.notStarted[-1].priority = process_priority
+            process_quantum = int(input('Insira o quantum desse processo: '))
+            os.notStarted[-1].quantum = process_quantum
+            print(os.notStarted[-1].processName)
 
         elif scheduler.upper() == 'SJF': 
-            process_execution_time = input('Insira o tempo de execução desse processo: ')
-            os.processList[-1].execTime = process_execution_time
+            process_execution_time = int(input('Insira o tempo de execução desse processo: '))
+            os.notStarted[-1].execTime = process_execution_time
 
         add_process = input('Você deseja inserir mais algum processo? (S/N) ')
 
@@ -267,17 +267,17 @@ if __name__ == '__main__':
         os.sjf()
 
     # os.loadProcess("ex_pgms_tp1/prog1.txt")
-    # os.processList[0].execTime = 3
-    # os.processList[0].arrivalTime = 0
+    # os.notStarted[0].execTime = 3
+    # os.notStarted[0].arrivalTime = 0
 
 
     # os.loadProcess("ex_pgms_tp1/prog2.txt")
-    # os.processList[1].execTime = 2
-    # os.processList[0].arrivalTime = 7
+    # os.notStarted[1].execTime = 2
+    # os.notStarted[0].arrivalTime = 7
 
     # os.loadProcess("ex_pgms_tp1/prog3.txt")
-    # os.processList[2].execTime = 1
-    # os.processList[0].arrivalTime = 0
+    # os.notStarted[2].execTime = 1
+    # os.notStarted[0].arrivalTime = 0
 
 
     # while os.process.terminate == False:
