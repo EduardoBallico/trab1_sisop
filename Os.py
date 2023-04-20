@@ -23,13 +23,14 @@ class Os():
 
 
 
-    def loadProcess(self, processName: str, arrivalTime): # adicionei arrival time para o usuario inserir
-        p = Process(processName, arrivalTime) # ------------------
+    def loadProcess(self, processName: str, arrivalTime): # inserir processos
+        p = Process(processName, arrivalTime) 
         self.notStarted.append(p)
         self.arrivalTimes.add(p.arrivalTime)
-        print("arrival time = ", p.arrivalTime)
+        # print("arrival time = ", p.arrivalTime)
 
-    def aritmeticInstructions(self, op1: int, instruction: str, process: Process):
+
+    def aritmeticInstructions(self, op1: int, instruction: str, process: Process): #instruções aritméticas
         if instruction == "add":
             process.acc += op1
         elif instruction == "sub":
@@ -42,10 +43,10 @@ class Os():
             else:
                 print("Processo ", str(process.processName), "foi terminado por tentar realizar divisao por 0")
                 process.terminate = True
-            # LIDAR COM DIV POR 0
+            
 
 
-    def memoryInstructions(self, op1: int or str, instruction: str, process: Process):
+    def memoryInstructions(self, op1: int or str, instruction: str, process: Process): #insrtuções de memória
         if instruction == "load":
             process.acc = op1
         elif instruction == "store":
@@ -53,7 +54,7 @@ class Os():
             process.acc = int(process.acc)
 
 
-    def jumpInstructions(self, instruction: str, process: Process, posLabel: int):
+    def jumpInstructions(self, instruction: str, process: Process, posLabel: int): #insrtuções de jump
         if instruction == "BRANY":
             process.pc = posLabel
         elif instruction == "BRPOS":
@@ -67,7 +68,7 @@ class Os():
                 process.pc = posLabel
 
 
-    def systemInstructions(self, process: Process, index: int):
+    def systemInstructions(self, process: Process, index: int): #insrtuções de sistema
         if index == 0:
             self.activeProcess.terminate = True
         elif index == 1:
@@ -79,10 +80,10 @@ class Os():
             #precisa ser numero
 
 
-    def executeProcess(self, process: Process):
+    def executeProcess(self, process: Process): #executa as instruções
         # print(process.pc)
         instruction = process.code[process.pc]
-        print(instruction)
+        # print(instruction)
         process.pc += 1
 
         if instruction[0] in self.instrucoes["aritmetic"]:
@@ -116,26 +117,30 @@ class Os():
             self.activeProcess.terminate = True
 
 
-    def testArrivalTimeRR(self):
+    def testArrivalTimeRR(self): #testa se alguma instrução chegou no tempo atual e ordena a lista corretamente com a prioridade dos processos
         for p in self.notStarted:
                 if p.arrivalTime == self.time:
                     index = self.notStarted.index(p)
                     self.readyList.append(self.notStarted.pop(index))
                     self.readyList = sorted(self.readyList, key = lambda p : p.priority)
 
-    def testArrivalTimeSJF(self):
+    def testArrivalTimeSJF(self): #testa se alguma instrução chegou no tempo atual e ordena a lista corretamente com o tempo de execução dos processos
         for p in self.notStarted:
                 if p.arrivalTime == self.time:
                     index = self.notStarted.index(p)
                     self.readyList.append(self.notStarted.pop(index))
                     self.readyList = sorted(self.readyList, key = lambda p : p.execTime)
 
-    def addWaitingTime(self):
+
+    def addWaitingTime(self): #soma 1 no waiting time de cada processo na lista de prontos
         if len(self.readyList) != 0:
             for p in self.readyList:
                 p.waitingTime += 1
 
+
     def showLists(self):
+        print("Tempo = ", str(self.time))
+
         print("\n----------- Lista de prontos -----------")
         if len(self.readyList) != 0:
             for p in self.readyList:
@@ -163,17 +168,30 @@ class Os():
         else:
             print("Lista vazia")
 
+    def isBlocked(self):
+        if (len(self.readyList) == 0 and len(self.blockedList) > 0):
+            return True
+        else:
+            return False
+        
+    def allProcessesNotReady(self):
+        if (len(self.notStarted) != 0 and len(self.readyList) == 0 and len(self.blockedList) == 0):
+            return True
+        else:
+            return False
 
-    def roundRobin(self):
+    def roundRobin(self): 
+        print("\nExecucao dos processos iniciada com RR\n")
+
         while len(self.readyList) != 0 or len(self.notStarted) != 0:
             self.testArrivalTimeRR()   
 
             if len(self.readyList) != 0:
                 self.activeProcess = self.readyList.pop(0)
-                print("processo ", self.activeProcess.processName, " entrou")
+               # print("processo ", self.activeProcess.processName, " entrou")
                 for i in range(self.activeProcess.quantum):
                     self.time += 1
-                    print("Os time ", str(self.time))
+                    # print("Os time ", str(self.time))
                     #print("executou", str(i))
                     self.executeProcess(self.activeProcess)
                     if self.activeProcess.shouldBeBlocked:
@@ -197,7 +215,7 @@ class Os():
 
                     if len(self.readyList) != 0:
                         if self.readyList[0].priority < self.activeProcess.priority:
-                            print("-----------------trocou----------------------")
+                            # print("-----------------trocou----------------------")
                             break
 
                     self.showLists()
@@ -209,16 +227,16 @@ class Os():
                 elif self.activeProcess.shouldBeBlocked:
                     self.blockedList.append(self.activeProcess)
                     self.activeProcess.blockedUntil = self.time + random.randint(8, 10)
-                    print("processo", self.activeProcess.processName, "bloqueado por ", str(self.activeProcess.blockedUntil - self.time))
+                    # print("processo", self.activeProcess.processName, "bloqueado por ", str(self.activeProcess.blockedUntil - self.time))
                     self.activeProcess.shouldBeBlocked = False
                 else:
                     self.readyList.append(self.activeProcess)
                     self.readyList = sorted(self.readyList, key = lambda p : p.priority)
 
-            if (len(self.readyList) == 0 and len(self.blockedList) > 0) or (len(self.notStarted) != 0 and len(self.readyList) == 0 and len(self.blockedList) == 0):
+            if self.isBlocked() or self.allProcessesNotReady():
                 while len(self.readyList) == 0:
                     self.time += 1
-                    print("tempo acrescentado em bloqueados", str(self.time))
+                    # print("tempo acrescentado em bloqueados", str(self.time))
                     for process in self.blockedList:
                             if process.blockedUntil <= self.time:
                                 index = self.blockedList.index(process)
@@ -231,7 +249,7 @@ class Os():
                     self.showLists()
 
 
-                print("processo saiu da lista de bloqueados")
+                # print("processo saiu da lista de bloqueados")
 
             
 
@@ -239,16 +257,19 @@ class Os():
 
 # ------------------------ SJF ---------------------------
     def sjf(self):
-        self.testArrivalTimeSJF()
+        print("\nExecucao dos processos iniciada com SJF\n")
+        
 
         while len(self.readyList) != 0 or len(self.notStarted) != 0:
+            self.testArrivalTimeSJF()
+            
             if len(self.readyList) != 0:
                 self.activeProcess = self.readyList.pop(0)
-                print("processo ", self.activeProcess.processName, " entrou")
+                # print("processo ", self.activeProcess.processName, " entrou")
 
                 while not self.activeProcess.terminate:
                     self.time += 1
-                    print("Os time ", str(self.time))
+                    # print("Os time ", str(self.time))
                     #print("executou", str(i))
                     self.executeProcess(self.activeProcess)
                     if self.activeProcess.shouldBeBlocked:
@@ -271,7 +292,7 @@ class Os():
 
                     if len(self.readyList) != 0:
                         if self.readyList[0].execTime < self.activeProcess.execTime:
-                            print("-----------------trocou----------------------")
+                            # print("-----------------trocou----------------------")
                             break
 
                     self.showLists()
@@ -283,16 +304,16 @@ class Os():
                 elif self.activeProcess.shouldBeBlocked:
                     self.blockedList.append(self.activeProcess)
                     self.activeProcess.blockedUntil = self.time + random.randint(8, 10)
-                    print("processo", self.activeProcess.processName, "bloqueado por ", str(self.activeProcess.blockedUntil - self.time))
+                    # print("processo", self.activeProcess.processName, "bloqueado por ", str(self.activeProcess.blockedUntil - self.time))
                     self.activeProcess.shouldBeBlocked = False
                 else:
                     self.readyList.append(self.activeProcess)
                     self.readyList = sorted(self.readyList, key = lambda p : p.execTime)
 
-            if (len(self.readyList) == 0 and len(self.blockedList) > 0) or (len(self.notStarted) != 0 and len(self.readyList) == 0 and len(self.blockedList) == 0):
+            if self.isBlocked() or self.allProcessesNotReady():
                 while len(self.readyList) == 0:
                     self.time += 1
-                    print("tempo acrescentado em bloqueados", str(self.time))
+                    # print("tempo acrescentado em bloqueados", str(self.time))
                     for process in self.blockedList:
                             if process.blockedUntil <= self.time:
                                 index = self.blockedList.index(process)
@@ -304,7 +325,7 @@ class Os():
                     self.showLists()
 
 
-                print("processo saiu da lista de bloqueados")
+                # print("processo saiu da lista de bloqueados")
 
 
 
