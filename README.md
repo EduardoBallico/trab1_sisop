@@ -10,9 +10,17 @@ O propósito deste estudo é investigar assuntos relacionados ao gerenciamento e
 
 - Python 3.10 - [Download](https://www.python.org/downloads/release/python-31010/)
 
-## Como executar
+## Execução
 
 - Executar o programa Os.py - Python os.py
+
+- No início da execução, é solicitado ao usuário qual escalonador desejado (Round Robin ou Shortest Job First)
+
+- Dependendo da escolha do escalonador, para cada processo a ser executado será solicitado ao usuário que insira algumas informações, como o instante de carga, a prioridade e o quantum, no caso do escalonador Round Robin
+
+- É possível carregar diversos processos
+
+- Quando o usuário definir que não deseja inserir mais processos, o escalonador sreá executado
  
 ## Autores
 
